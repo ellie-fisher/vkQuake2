@@ -59,6 +59,17 @@ static void getBestPhysicalDevice(const VkPhysicalDevice *devices, int preferred
 	VkPhysicalDeviceFeatures deviceFeatures;
 	uint32_t queueFamilyCount = 0;
 
+	qboolean anyDiscreteAvailable = false;
+	for (int i = 0; i < count; ++i)
+	{
+		vkGetPhysicalDeviceProperties(devices[i], &deviceProperties);
+		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+		{
+			anyDiscreteAvailable = true;
+			break;
+		}
+	}
+
 	for (int i = 0; i < count; ++i)
 	{
 		vkGetPhysicalDeviceProperties(devices[i], &deviceProperties);
@@ -70,8 +81,8 @@ static void getBestPhysicalDevice(const VkPhysicalDevice *devices, int preferred
 
 		// prefer discrete GPU but if it's the only one available then don't be picky
 		// also - if the user specifies a preferred device, select it
-		qboolean bestProperties = deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-		if (preferredIdx == i || (bestProperties && preferredIdx < 0) || count == 1)
+		qboolean isDiscrete = deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+		if (preferredIdx == i || (isDiscrete && preferredIdx < 0) || (!anyDiscreteAvailable && preferredIdx < 0) || count == 1)
 		{
 			uint32_t formatCount = 0;
 			uint32_t presentModesCount = 0;
