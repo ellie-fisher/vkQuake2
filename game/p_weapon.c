@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 1997-2001 Id Software, Inc.
 
 This program is free software; you can redistribute it and/or
@@ -174,7 +174,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 	if (other->client->pers.weapon != ent->item && 
 		(other->client->pers.inventory[index] == 1) &&
-		( !deathmatch->value || other->client->pers.weapon == FindItem("blaster") ) )
+		( !deathmatch->value || other->client->pers.weapon == FindItem("") ) )
 		other->client->newweapon = ent->item;
 
 	return true;
@@ -287,7 +287,7 @@ void NoAmmoWeaponChange (edict_t *ent)
 		ent->client->newweapon = FindItem ("shotgun");
 		return;
 	}
-	ent->client->newweapon = FindItem ("blaster");
+	ent->client->newweapon = FindItem ("");
 }
 
 /*
@@ -526,7 +526,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		}
 	}
 
-	if (ent->client->weaponstate == WEAPON_FIRING)
+	if (ent->client->weaponstate == WEAPON_FIRING && fire_frames)
 	{
 		for (n = 0; fire_frames[n]; n++)
 		{
@@ -535,7 +535,10 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 				if (ent->client->quad_framenum > level.framenum)
 					gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
 
-				fire (ent);
+				if (fire)
+				{
+					fire (ent);
+				}
 				break;
 			}
 		}
@@ -872,6 +875,14 @@ void Weapon_Blaster_Fire (edict_t *ent)
 		damage = 10;
 	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
 	ent->client->ps.gunframe++;
+}
+
+void Weapon_Null (edict_t *ent)
+{
+	static int	pause_frames[]	= {0};
+	static int	fire_frames[]	= {0};
+
+	Weapon_Generic (ent,  1, 2, 3, 4, pause_frames, fire_frames, NULL);
 }
 
 void Weapon_Blaster (edict_t *ent)

@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 1997-2001 Id Software, Inc.
 Copyright (C) 2018-2019 Krzysztof Kondrak
 
@@ -77,7 +77,7 @@ void Con_ToggleConsole_f (void)
 
 	if (cls.state == ca_disconnected)
 	{	// start the demo loop again
-		Cbuf_AddText ("d1\n");
+		Cbuf_AddText ("menu_main\n");
 		return;
 	}
 

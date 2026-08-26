@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 1997-2001 Id Software, Inc.
 
 This program is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@ qboolean	Pickup_Weapon (edict_t *ent, edict_t *other);
 void		Use_Weapon (edict_t *ent, gitem_t *inv);
 void		Drop_Weapon (edict_t *ent, gitem_t *inv);
 
+void Weapon_Null (edict_t *ent);
 void Weapon_Blaster (edict_t *ent);
 void Weapon_Shotgun (edict_t *ent);
 void Weapon_SuperShotgun (edict_t *ent);
@@ -1284,7 +1285,33 @@ gitem_t	itemlist[] =
 	//
 	// WEAPONS 
 	//
+	{
+		"weapon_null",
+		NULL,
+		Use_Weapon,
+		NULL,
+		Weapon_Null,
+		"",
+		"",
+		0,
+		"",
 
+		// client side info
+		"",
+		"",
+		0,
+
+		0,
+		"",
+		IT_WEAPON|IT_STAY_COOP,
+
+		0,
+
+		NULL,
+		0,
+
+		"",
+	},
 /* weapon_blaster (.3 .3 1) (-16 -16 -16) (16 16 16)
 always owned, never in the world
 */
@@ -1331,7 +1358,6 @@ always owned, never in the world
 		0,
 /* precache */ "weapons/shotgf1b.wav weapons/shotgr1b.wav"
 	},
-
 /*QUAKED weapon_supershotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{

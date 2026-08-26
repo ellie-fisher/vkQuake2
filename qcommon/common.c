@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 1997-2001 Id Software, Inc.
 Copyright (C) 2018-2019 Krzysztof Kondrak
 
@@ -1484,7 +1484,7 @@ void Qcommon_Init (int argc, char **argv)
 	if (!Cbuf_AddLateCommands ())
 	{	// if the user didn't give any commands, run default action
 		if (!dedicated->value)
-			Cbuf_AddText ("d1\n");
+			Cbuf_AddText ("deathmatch 1; map base1\n");
 		else
 			Cbuf_AddText ("dedicated_start\n");
 		Cbuf_Execute ();
