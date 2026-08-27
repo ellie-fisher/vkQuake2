@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 1997-2001 Id Software, Inc.
 Copyright (C) 2018-2019 Krzysztof Kondrak
 
@@ -501,83 +501,40 @@ void *Sys_GetGameAPI (void *parms)
 	void	*(*GetGameAPI) (void *);
 	char	name[MAX_OSPATH];
 	char	*path;
-	char	cwd[MAX_OSPATH];
-#if defined _M_IX86
-	const char *gamename = "gamex86.dll";
 
-#ifdef NDEBUG
-	const char *debugdir = "release";
+#ifdef _DEBUG
+	const char* gamename = "game_debug.dll";
 #else
-	const char *debugdir = "debug";
-#endif
-
-#elif defined _M_X64
-	const char *gamename = "gamex64.dll";
-
-#ifdef NDEBUG
-	const char *debugdir = "releasex64";
-#else
-	const char *debugdir = "debugx64";
-#endif
-
-#elif defined _M_ARM64
-	const char* gamename = "gameARM64.dll";
-
-#ifdef NDEBUG
-	const char* debugdir = "releaseARM64";
-#else
-	const char* debugdir = "debugARM64";
-#endif
-
-#elif defined _M_ALPHA
-	const char *gamename = "gameaxp.dll";
-
-#ifdef NDEBUG
-	const char *debugdir = "releaseaxp";
-#else
-	const char *debugdir = "debugaxp";
-#endif
-
+	const char *gamename = "game.dll";
 #endif
 
 	if (game_library)
 		Com_Error (ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame");
 
-	// check the current debug directory first for development purposes
-	_getcwd (cwd, sizeof(cwd));
-	Com_sprintf (name, sizeof(name), "%s/%s/%s", cwd, debugdir, gamename);
+#ifdef DEBUG
+	// check the current directory for other development purposes
+	Com_sprintf (name, sizeof(name), "%s/%s", cwd, gamename);
 	game_library = LoadLibrary ( name );
 	if (game_library)
 	{
 		Com_DPrintf ("LoadLibrary (%s)\n", name);
 	}
 	else
-	{
-#ifdef DEBUG
-		// check the current directory for other development purposes
-		Com_sprintf (name, sizeof(name), "%s/%s", cwd, gamename);
-		game_library = LoadLibrary ( name );
-		if (game_library)
-		{
-			Com_DPrintf ("LoadLibrary (%s)\n", name);
-		}
-		else
 #endif
+	{
+		// now run through the search paths
+		path = NULL;
+		while (1)
 		{
-			// now run through the search paths
-			path = NULL;
-			while (1)
+			path = FS_NextPath (path);
+			if (!path)
+				return NULL;		// couldn't find one anywhere
+			Com_sprintf (name, sizeof(name), "%s/%s", path, gamename);
+			game_library = LoadLibrary (name);
+			if (game_library)
 			{
-				path = FS_NextPath (path);
-				if (!path)
-					return NULL;		// couldn't find one anywhere
-				Com_sprintf (name, sizeof(name), "%s/%s", path, gamename);
-				game_library = LoadLibrary (name);
-				if (game_library)
-				{
-					Com_DPrintf ("LoadLibrary (%s)\n",name);
-					break;
-				}
+				Com_DPrintf ("LoadLibrary (%s)\n",name);
+				break;
 			}
 		}
 	}

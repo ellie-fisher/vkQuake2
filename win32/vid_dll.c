@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 1997-2001 Id Software, Inc.
 Copyright (C) 2018-2019 Krzysztof Kondrak
 
@@ -744,7 +744,11 @@ void VID_CheckChanges (void)
 		cl.refresh_prepped = false;
 		cls.disable_screen = true;
 
+	#ifdef _DEBUG
+		Com_sprintf( name, sizeof(name), "ref_%s_debug.dll", vid_ref->string );
+	#else
 		Com_sprintf( name, sizeof(name), "ref_%s.dll", vid_ref->string );
+	#endif
 		if ( !VID_LoadRefresh( name ) )
 		{
 			if ( strcmp (vid_ref->string, "soft") == 0 )
