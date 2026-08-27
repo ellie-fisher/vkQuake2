@@ -12,10 +12,24 @@ layout(push_constant) uniform PushConstant
 } pc;
 
 layout(set = 0, binding = 0) uniform sampler2D sTexture;
-
 layout(location = 0) out vec4 fragmentColor;
 
 #define PI 3.1415
+
+vec4 blur(sampler2D tex, vec2 uv, vec2 texelSize, int radius)
+{
+    vec4 color = vec4(0.0);
+
+    for (int x = -radius; x <= radius; x++)
+    {
+        for (int y = -radius; y <= radius; y++)
+        {
+            color += texture(tex, uv + vec2(x, y) * texelSize);
+        }
+    }
+
+    return color / float((radius * 2 + 1) * (radius * 2 + 1));
+}
 
 void main()
 {
@@ -23,14 +37,10 @@ void main()
 
 	if (pc.time > 0)
 	{
-		float sx = pc.scale - abs(pc.scrWidth  / 2.0 - gl_FragCoord.x) * 2.0 / pc.scrWidth;
-		float sy = pc.scale - abs(pc.scrHeight / 2.0 - gl_FragCoord.y) * 2.0 / pc.scrHeight;
-		float xShift = 2.0 * pc.time + uv.y * PI * 10;
-		float yShift = 2.0 * pc.time + uv.x * PI * 10;
-		vec2 distortion = vec2(sin(xShift) * sx, sin(yShift) * sy) * 0.00666;
-
-		uv += distortion;
+		fragmentColor = blur(sTexture, uv, 1.0f / vec2(pc.scrWidth, pc.scrHeight), 16);
 	}
-
-	fragmentColor = texture(sTexture, uv);
+	else
+	{
+		fragmentColor = texture(sTexture, uv);
+	}
 }

@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 1997-2001 Id Software, Inc.
 Copyright (C) 2018-2019 Krzysztof Kondrak
 
